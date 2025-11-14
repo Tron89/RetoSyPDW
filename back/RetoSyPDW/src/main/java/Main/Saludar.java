@@ -3,6 +3,7 @@ package Main;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 
 import database.Conexion;
 import jakarta.jws.WebMethod;
@@ -13,45 +14,21 @@ import jakarta.jws.WebService;
 public class Saludar {
 
 	@WebMethod
-	public String diHola(@WebParam (name="nombre") String nombre)
+	public List<database.Curso> listaCurso()
 	{
-		return "Hola " + nombre;
+		return database.Dao.listaCurso();
 	}
 	
 	@WebMethod
-	public String testBD() {
-        // Open connection
-        Connection con = Conexion.getConexion();
-        String str = "";
-        
-        try {
-            // Create a statement
-            Statement stmt = con.createStatement();
-            
-            // Execute a query (example: get all students)
-            String sql = "SELECT * FROM alumno"; 
-            ResultSet rs = stmt.executeQuery(sql);
-            
-            // Iterate over results
-            while (rs.next()) {
-                int id = rs.getInt("idalumno");
-                String nombre = rs.getString("nombre");
-                String sexo = rs.getString("sexo");
-                String apellidos = rs.getString("apellidos");
-                str += id + " | " + nombre + " | " + sexo + " | " + apellidos + "\n";
-            }
-            
-            // Close ResultSet and Statement
-            rs.close();
-            stmt.close();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Close connection
-            Conexion.cierraConexion();
-        }
-        return str;
+	public List<database.AlumnoCurso> listaAlumnos(@WebParam (name="idcurso") int idcurso)
+	{
+		return database.Dao.listaAlumnos(idcurso);
+	}
+	
+	@WebMethod
+	public List<database.AlumnoAsignatura> alumnoasignatura(@WebParam (name="idalumno") int idalumno)
+	{
+		return database.Dao.alumnoasignatura(idalumno);
 	}
 	
 }

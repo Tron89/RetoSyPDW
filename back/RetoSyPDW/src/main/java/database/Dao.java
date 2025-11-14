@@ -18,7 +18,7 @@ public class Dao { // Una unica clase dao por que es mas simple c:
 	// actualiza la nota media del alumno.
 	
 	
-	public List<Curso> listaCurso() {
+	public static List<Curso> listaCurso() { // Punto 1
         Connection con = Conexion.getConexion();
         List<Curso> cursos = new ArrayList<Curso>();
         
@@ -43,26 +43,45 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         return cursos;
 	}
 	
-	
-	public List<AlumnoCurso> listaAlumnos(int idcurso) { // Pfffffffffff, hacer esta relacion, buscate la vida bobo
+	public static List<Curso> listaCurso(int id) {
         Connection con = Conexion.getConexion();
-        List<AlumnoCurso> alumnocursos = new ArrayList<AlumnoCurso>();
+        List<Curso> cursos = new ArrayList<Curso>();
         
-        try {
-            Statement stmt = con.createStatement();
-            
-            String sql = "SELECT idalumnocurso,idcurso,idalumno,fechamatricula,notamedia FROM alumnocurso WHERE idcurso = ?";
+        try {                        
+            String sql = "SELECT idcurso, curso FROM curso WHERE idcurso = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             
-            ps.setInt(1, idcurso);
+            ps.setInt(1, id);
             
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
-            	
-            	
-            	alumnocursos.add(new AlumnoCurso(rs.getInt("idalumnocurso"), rs.getInt("idcurso"), null, rs.getString("fechamatricula"), rs.getInt("notamedia")))
                 cursos.add(new Curso(rs.getInt("idcurso"), rs.getString("curso")));
+            }
+            
+            rs.close();
+            ps.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Conexion.cierraConexion();
+        }
+        return cursos;
+	}
+	
+	public static List<Alumno> listaAlumno() {
+        Connection con = Conexion.getConexion();
+        List<Alumno> alumnos = new ArrayList<Alumno>();
+        
+        try {
+            Statement stmt = con.createStatement();
+            
+            String sql = "SELECT idalumno,nombre,fechanac,sexo,apellidos FROM alumno";
+            ResultSet rs = stmt.executeQuery(sql);
+            
+            while (rs.next()) {
+            	alumnos.add(new Alumno(rs.getInt("idalumno"), rs.getString("nombre"), rs.getString("fechanac"), rs.getString("sexo"), rs.getString("apellidos")));
             }
             
             rs.close();
@@ -73,10 +92,99 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         } finally {
             Conexion.cierraConexion();
         }
-        return cursos;
+        return alumnos;
 	}
 	
-	public String testBD() { // EJEMPLO
+	public static List<Alumno> listaAlumno(int id) {
+        Connection con = Conexion.getConexion();
+        List<Alumno> alumnos = new ArrayList<Alumno>();
+        
+        try {                        
+            String sql = "SELECT idalumno,nombre,fechanac,sexo,apellidos FROM alumno WHERE idalumno = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ps.setInt(1, id);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+            	alumnos.add(new Alumno(rs.getInt("idalumno"), rs.getString("nombre"), rs.getString("fechanac"), rs.getString("sexo"), rs.getString("apellidos")));
+            }
+            
+            rs.close();
+            ps.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Conexion.cierraConexion();
+        }
+        return alumnos;
+	}
+	
+	public static List<AlumnoCurso> listaAlumnos(int id) { // Punto 2
+        Connection con = Conexion.getConexion();
+        List<AlumnoCurso> alumnocursos = new ArrayList<AlumnoCurso>();
+        
+        try {            
+            String sql = "SELECT idalumnocurso,idcurso,ac.idalumno,fechamatricula,notamedia "
+            		+ " FROM alumnocurso ac "
+            		+ " INNER JOIN alumno al ON al.idalumno = ac.idalumno "
+            		+ " WHERE idcurso = ? "
+            		+ " ORDER BY al.apellidos";
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ps.setInt(1, id);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+            	alumnocursos.add(new AlumnoCurso(rs.getInt("idalumnocurso"), listaCurso(rs.getInt("idcurso")).get(0), listaAlumno(rs.getInt("idalumno")).get(0), rs.getString("fechamatricula"), rs.getDouble("notamedia")));
+            }
+            
+            rs.close();
+            ps.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Conexion.cierraConexion();
+        }
+        return alumnocursos;		
+		
+	}
+		
+	public static List<AlumnoAsignatura> alumnoasignatura(int id){ // Punto 3
+        Connection con = Conexion.getConexion();
+        List<AlumnoAsignatura> alumnoasignatura = new ArrayList<AlumnoAsignatura>();
+        
+        try {            
+            String sql = "SELECT idalumnoasignatura,idalumno,asignatura,nota "
+            		+ " FROM alumnoasignatura "
+            		+ " WHERE idalumno = ? ";
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ps.setInt(1, id);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+            	alumnoasignatura.add(new AlumnoAsignatura(rs.getInt("idalumnoasignatura"), listaAlumno(rs.getInt("idalumno")).get(0), rs.getString("asignatura"), rs.getInt("nota")));
+            }
+            
+            rs.close();
+            ps.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Conexion.cierraConexion();
+        }
+        return alumnoasignatura;		
+	}
+	
+	
+	public static String testBD() { // EJEMPLO
         // Open connection
         Connection con = Conexion.getConexion();
         String str = "";
