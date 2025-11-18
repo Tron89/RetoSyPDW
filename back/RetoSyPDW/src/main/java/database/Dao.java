@@ -127,10 +127,11 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         List<AlumnoCurso> alumnocursos = new ArrayList<AlumnoCurso>();
         
         try {            
-            String sql = "SELECT idalumnocurso,idcurso,ac.idalumno,fechamatricula,notamedia "
+            String sql = "SELECT idalumnocurso, cu.idcurso, cu.curso, al.idalumno, al.nombre, al.fechanac, al.sexo, al.apellidos, fechamatricula, notamedia "
             		+ " FROM alumnocurso ac "
             		+ " INNER JOIN alumno al ON al.idalumno = ac.idalumno "
-            		+ " WHERE idcurso = ? "
+            		+ " INNER JOIN curso cu ON cu.idcurso = ac.idcurso "
+            		+ " WHERE ac.idcurso = ? "
             		+ " ORDER BY al.apellidos";
             PreparedStatement ps = con.prepareStatement(sql);
             
@@ -139,7 +140,12 @@ public class Dao { // Una unica clase dao por que es mas simple c:
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
-            	alumnocursos.add(new AlumnoCurso(rs.getInt("idalumnocurso"), listaCurso(rs.getInt("idcurso")).get(0), listaAlumno(rs.getInt("idalumno")).get(0), rs.getString("fechamatricula"), rs.getDouble("notamedia")));
+            	alumnocursos.add(
+            			new AlumnoCurso(rs.getInt("idalumnocurso"), 
+            			new Curso(rs.getInt("idcurso"), rs.getString("curso")),
+            			new Alumno(rs.getInt("idalumno"), rs.getString("nombre"), rs.getString("fechanac"), rs.getString("sexo"), rs.getString("apellidos")),
+            			rs.getString("fechamatricula"),
+            			rs.getDouble("notamedia")));
             }
             
             rs.close();
@@ -159,9 +165,10 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         List<AlumnoAsignatura> alumnoasignatura = new ArrayList<AlumnoAsignatura>();
         
         try {            
-            String sql = "SELECT idalumnoasignatura,idalumno,asignatura,nota "
-            		+ " FROM alumnoasignatura "
-            		+ " WHERE idalumno = ? ";
+            String sql = "SELECT idalumnoasignatura, al.idalumno, al.nombre, al.fechanac, al.sexo, al.apellidos, asignatura, nota "
+            		+ " FROM alumnoasignatura aa"
+            		+ " INNER JOIN alumno al ON al.idalumno = aa.idalumno "
+            		+ " WHERE aa.idalumno = ? ";
             PreparedStatement ps = con.prepareStatement(sql);
             
             ps.setInt(1, id);
@@ -169,7 +176,11 @@ public class Dao { // Una unica clase dao por que es mas simple c:
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
-            	alumnoasignatura.add(new AlumnoAsignatura(rs.getInt("idalumnoasignatura"), listaAlumno(rs.getInt("idalumno")).get(0), rs.getString("asignatura"), rs.getInt("nota")));
+            	alumnoasignatura.add(
+            			new AlumnoAsignatura(rs.getInt("idalumnoasignatura"),
+            			new Alumno(rs.getInt("idalumno"), rs.getString("nombre"), rs.getString("fechanac"), rs.getString("sexo"), rs.getString("apellidos")),
+            			rs.getString("asignatura"),
+            			rs.getInt("nota")));
             }
             
             rs.close();
