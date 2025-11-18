@@ -246,9 +246,14 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         try {
             Statement stmt = con.createStatement();
             
-            String sql = "UPDATE ";
+            String sql = " UPDATE alumnocurso ac "
+            		+ " JOIN ( "
+            		+ "     SELECT idalumno, AVG(nota) AS promedio "
+            		+ "    FROM alumnoasignatura "
+            		+ "    GROUP BY idalumno "
+            		+ " ) aa ON aa.idalumno = ac.idalumno "
+            		+ " SET ac.notamedia = aa.promedio; ";
             result = stmt.executeUpdate(sql);
-            
             
             stmt.close();
         } catch (Exception e) {
