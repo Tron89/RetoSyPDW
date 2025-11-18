@@ -195,7 +195,7 @@ public class Dao { // Una unica clase dao por que es mas simple c:
 	}
 	
 	
-	public static int actualizaNotas(List<AlumnoAsignatura> lista) { // Punto 4
+	public static int actualizaNotas(AlumnoAsignatura[] lista) { // Punto 4
         Connection con = Conexion.getConexion();
         int result = 0;
         
@@ -203,7 +203,7 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         	String sqlWhen = "";
         	String sqlWhere = "";
                
-        	for (int i = 0; i < lista.size(); i++) {
+        	for (int i = 0; i < lista.length; i++) {
 				sqlWhen += " WHEN idalumnoasignatura = ? THEN ? ";
 				sqlWhere += " ? ";
 			}
@@ -213,16 +213,15 @@ public class Dao { // Una unica clase dao por que es mas simple c:
             		+ " SET "
             		+ " nota = CASE"
             		+ sqlWhen
-            		+ " 	ELSE amount "
             		+ " END "
             		+ " WHERE "
-            		+ " id IN (" + sqlWhere + "); ";
+            		+ " idalumnoasignatura IN (" + sqlWhere + "); ";
             PreparedStatement ps = con.prepareStatement(sql);
             
-            for (int i = 0; i < lista.size(); i++) {
-                ps.setInt(1, lista.get(0+(i*3)).getIdalumnoasignatura());
-                ps.setInt(2, lista.get(1+(i*3)).getIdalumnoasignatura());
-                ps.setInt(3, lista.get(2+(i*3)).getIdalumnoasignatura());
+            for (int i = 0; i < lista.length; i++) {
+                ps.setInt(1+(i*3), lista[i].getIdalumnoasignatura());
+                ps.setInt(2+(i*3), lista[i].getNota());
+                ps.setInt(3+(i*3), lista[i].getIdalumnoasignatura());
             }
             
             result = ps.executeUpdate();
@@ -246,9 +245,14 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         try {
             Statement stmt = con.createStatement();
             
-            String sql = "UPDATE ";
+            String sql = " UPDATE alumnocurso ac "
+            		+ " JOIN ( "
+            		+ "     SELECT idalumno, AVG(nota) AS promedio "
+            		+ "    FROM alumnoasignatura "
+            		+ "    GROUP BY idalumno "
+            		+ " ) aa ON aa.idalumno = ac.idalumno "
+            		+ " SET ac.notamedia = aa.promedio; ";
             result = stmt.executeUpdate(sql);
-            
             
             stmt.close();
         } catch (Exception e) {

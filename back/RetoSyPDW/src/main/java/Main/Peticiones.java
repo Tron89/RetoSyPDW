@@ -28,10 +28,10 @@ public class Peticiones {
 		return database.Dao.alumnoasignatura(idalumno);
 	}
 	
-	public void actualizaNotas(@WebParam (name="lista") List<database.AlumnoAsignatura> lista)
+	@WebMethod
+	public void actualizaNotas(@WebParam (name="lista") database.AlumnoAsignatura[] lista)
 	{
-		actualizaNotas(lista);
-		return;
+		database.Dao.actualizaNotas(lista);
 	}
 	
 }
