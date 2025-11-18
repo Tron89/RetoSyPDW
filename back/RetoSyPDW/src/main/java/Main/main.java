@@ -4,8 +4,8 @@ import jakarta.xml.ws.Endpoint;
 
 public class main {
 	public static void main(String[] args) {
-		Saludar implementor = new Saludar();
-		String address = "http://localhost:9000/ServicioSaludar";
+		Peticiones implementor = new Peticiones();
+		String address = "http://localhost:9000/Peticiones";
 		Endpoint.publish(address, implementor);
 	}
 }
