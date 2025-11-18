@@ -1,11 +1,7 @@
 package Main;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.List;
 
-import database.Conexion;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
@@ -24,11 +20,18 @@ public class Peticiones {
 	{
 		return database.Dao.listaAlumnos(idcurso);
 	}
+
 	
 	@WebMethod
 	public List<database.AlumnoAsignatura> alumnoasignatura(@WebParam (name="idalumno") int idalumno)
 	{
 		return database.Dao.alumnoasignatura(idalumno);
+	}
+	
+	public void actualizaNotas(@WebParam (name="lista") List<database.AlumnoAsignatura> lista)
+	{
+		actualizaNotas(lista);
+		return;
 	}
 	
 }

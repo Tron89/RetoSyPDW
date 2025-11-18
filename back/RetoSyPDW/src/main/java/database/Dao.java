@@ -195,40 +195,71 @@ public class Dao { // Una unica clase dao por que es mas simple c:
 	}
 	
 	
-	public static String testBD() { // EJEMPLO
-        // Open connection
+	public static int actualizaNotas(List<AlumnoAsignatura> lista) { // Punto 4
         Connection con = Conexion.getConexion();
-        String str = "";
+        int result = 0;
         
         try {
-            // Create a statement
-            Statement stmt = con.createStatement();
+        	String sqlWhen = "";
+        	String sqlWhere = "";
+               
+        	for (int i = 0; i < lista.size(); i++) {
+				sqlWhen += " WHEN idalumnoasignatura = ? THEN ? ";
+				sqlWhere += " ? ";
+			}
+        	
+        	
+            String sql = "UPDATE alumnoasignatura "
+            		+ " SET "
+            		+ " nota = CASE"
+            		+ sqlWhen
+            		+ " 	ELSE amount "
+            		+ " END "
+            		+ " WHERE "
+            		+ " id IN (" + sqlWhere + "); ";
+            PreparedStatement ps = con.prepareStatement(sql);
             
-            // Execute a query (example: get all students)
-            String sql = "SELECT * FROM alumno"; 
-            ResultSet rs = stmt.executeQuery(sql);
-            
-            // Iterate over results
-            while (rs.next()) {
-                int id = rs.getInt("idalumno");
-                String nombre = rs.getString("nombre");
-                String sexo = rs.getString("sexo");
-                String apellidos = rs.getString("apellidos");
-                str += id + " | " + nombre + " | " + sexo + " | " + apellidos + "\n";
+            for (int i = 0; i < lista.size(); i++) {
+                ps.setInt(1, lista.get(0+(i*3)).getIdalumnoasignatura());
+                ps.setInt(2, lista.get(1+(i*3)).getIdalumnoasignatura());
+                ps.setInt(3, lista.get(2+(i*3)).getIdalumnoasignatura());
             }
             
-            // Close ResultSet and Statement
-            rs.close();
-            stmt.close();
+            result = ps.executeUpdate();
+                       
+            ps.close();
             
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            // Close connection
             Conexion.cierraConexion();
         }
-        return str;
+        
+        actualizaMedias();
+        
+        return result;
 	}
 	
+	public static int actualizaMedias() {
+        Connection con = Conexion.getConexion();
+        int result = 0;
+        try {
+            Statement stmt = con.createStatement();
+            
+            String sql = "UPDATE ";
+            result = stmt.executeUpdate(sql);
+            
+            
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Conexion.cierraConexion();
+        }
+                
+        return result;
+
+	}
+
 	
 }
