@@ -6,6 +6,33 @@
     // echo var_dump($asignaturas);
     $nombre = $asignaturas[0]->alumno->nombre ?? 'NOMBRE';
     $appellidos = $asignaturas[0]->alumno->apellidos ?? 'APELLIDOS';
+
+    $valName = 'nota_';
+
+    // foreach ($client->__getFunctions() as $type) {
+    //     echo htmlspecialchars($type) . "<br>";
+    // }
+
+    // echo "<br><br>";
+    
+    // foreach ($client->__getTypes() as $type) {
+    //     echo htmlspecialchars($type) . "<br>";
+    // }
+
+    $hayCambios = false;
+    foreach ($asignaturas as $asignatura) {
+        if (isset($_POST[$valName . $asignatura->idalumnoasignatura])) {
+            $nuevaNota = floatval($_POST[$valName . $asignatura->idalumnoasignatura]);
+            if ($nuevaNota >= 0 && $nuevaNota <= 10) {
+                $asignatura->nota = $nuevaNota;
+            }
+            $hayCambios = true;
+        }
+    }
+
+    if ($hayCambios){
+        $client->actualizaNotas(['lista' => $asignaturas]);
+    }
 ?>
 
 <!-- listaCursoResponse listaCurso(listaCurso $parameters)
@@ -34,9 +61,10 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
 </head>
 <body class="container">
     <h1 class="mt-5">Notas de <?=$appellidos . ", " . $nombre?></h1>
-    <form action="data.php" class="form">
+    <form action="alumnoInfo.php" class="form" method="post">
         <table class="table table-stripped">
             <thead>
+                <th>ID</th>
                 <th>ASIGNATURA</th>
                 <th>NOTA</th>
             </thead>
@@ -44,14 +72,17 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
                 <?php
                     foreach ($asignaturas as $asignatura) {
                         echo "<tr>";
+                            echo "<td>" . htmlspecialchars($asignatura->idalumnoasignatura) . "</td>";
                             echo "<td>" . htmlspecialchars($asignatura->asignatura) . "</td>";
-                            echo "<td><input class=\"form-control\" type='number' name='nota_" . htmlspecialchars($asignatura->idalumnoasignatura) . "' value='" . htmlspecialchars($asignatura->nota) . "' min='0' max='10' step='0.01'></td>";
+                            echo "<td><input class=\"form-control\" type='number' name='" . $valName .
+                            htmlspecialchars($asignatura->idalumnoasignatura) . "' value='" . htmlspecialchars($asignatura->nota) . "' min='0' max='10' step='0.01'></td>";
                         echo "</tr>";
                     }
                 ?>
             </tbody>
         </table>
-        <input type="button" value="Guardar notas" class="btn btn-primary">
+        <input type="hidden" name="idalumno" value="<?=htmlspecialchars($id)?>">
+        <input type="submit" value="Guardar notas" class="btn btn-primary">
         <input type="button" onclick="javascript:history.go(-1)" value="Volver" class="btn btn-secondary">
     </form>
     <!-- Bootstrap JS Bundle -->

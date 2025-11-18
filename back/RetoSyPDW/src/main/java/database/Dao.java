@@ -235,7 +235,7 @@ public class Dao { // Una unica clase dao por que es mas simple c:
             Conexion.cierraConexion();
         }
         
-        actualizaMedias();
+        // actualizaMedias();
         
         return result;
 	}
