@@ -1,5 +1,7 @@
 <?php
-    $client = new SoapClient("http://localhost:9000/ServicioSaludar?wsdl");
+    $idcurso = 1;
+
+    $client = new SoapClient("http://localhost:9000/Peticiones?wsdl");
 
     $cursos = $client->listaCurso()->return;
 ?>
@@ -29,7 +31,7 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container">
-    <form action="inicio.php" method="get">
+    <form action="inicio.php" method="post">
         <select name="curso" id="curso" class="form-select mt-4">
         <?php
             foreach ($cursos as $curso) {
@@ -54,19 +56,21 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
         </thead>
         <tbody>
             <?php
-                if (isset($_GET['curso'])){
-                    $idcurso = $_GET['curso'];
-                    $alumnosCurso = $client->listaAlumnos(['idcurso' => $idcurso])->return;
-                    foreach ($alumnosCurso as $alumnoCurso) {
+                $alumnos = $client->listaAlumnos(['idcurso' => $idcurso])->return;
+                foreach ($alumnos as $alumno) {
+                    echo "<form action=\"alumnoInfo.php\" method=\"post\">";
                         echo "<tr>";
-                        echo "<td>" . htmlspecialchars($alumnoCurso->alumno->apellidos . ", " . $alumnoCurso->alumno->nombre) . "</td>";
-                        echo "<td>" . htmlspecialchars($alumnoCurso->alumno->fechanac) . "</td>";
-                        echo "<td>" . htmlspecialchars($alumnoCurso->alumno->sexo) . "</td>";
-                        echo "<td>" . htmlspecialchars($alumnoCurso->notamedia) . "</td>";
-                        echo "<td>" . htmlspecialchars($alumnoCurso->fechamatricula) . "</td>";
-                        echo "<td><a href=\"alumnoInfo.php?id=" . urlencode($alumnoCurso->idalumnocurso) . "&nombre=" . urlencode($alumnoCurso->alumno->apellidos . ", " . $alumnoCurso->alumno->nombre) . "\" class=\"btn btn-primary\">></a></td>";
+                            echo "<td>" . htmlspecialchars($alumno->alumno->nombre . " " . $alumno->alumno->apellidos) . "</td>";
+                            echo "<td>" . htmlspecialchars($alumno->alumno->fechanac) . "</td>";
+                            echo "<td>" . htmlspecialchars($alumno->alumno->sexo) . "</td>";
+                            echo "<td>" . htmlspecialchars($alumno->notamedia) . "</td>";
+                            echo "<td>" . htmlspecialchars($alumno->fechamatricula) . "</td>";
+                            echo "<td>";
+                                echo "<input type=\"hidden\" name=\"idalumno\" value=\"" . htmlspecialchars($alumno->idalumnocurso) . "\">";
+                                echo "<input type=\"submit\" value=\">\" class=\"btn btn-primary\">";
+                            echo "</td>";
                         echo "</tr>";
-                    }
+                    echo "</form>";
                 }
             ?>
         </tbody>

@@ -1,7 +1,27 @@
 <?php
-    $nombre = $_GET['nombre'] ?? 'NOMBRE';
-    $id = $_GET['id'] ?? 'ID';
+    $client = new SoapClient("http://localhost:9000/Peticiones?wsdl");
+    
+    $id = $_POST['idalumno'] ?? 'ID';
+    $asignaturas = $client->alumnoasignatura(['idalumno' => $id])->return;
+    // echo var_dump($asignaturas);
+    $nombre = $asignaturas[0]->alumno->nombre ?? 'NOMBRE';
+    $appellidos = $asignaturas[0]->alumno->apellidos ?? 'APELLIDOS';
 ?>
+
+<!-- listaCursoResponse listaCurso(listaCurso $parameters)
+alumnoasignaturaResponse alumnoasignatura(alumnoasignatura $parameters)
+listaAlumnosResponse listaAlumnos(listaAlumnos $parameters)
+
+struct listaCurso { }
+struct listaCursoResponse { curso return; }
+struct curso { string curso; int idCurso; }
+struct alumnoasignatura { int idalumno; }
+struct alumnoasignaturaResponse { alumnoAsignatura return; }
+struct alumnoAsignatura { alumno alumno; string asignatura; int idalumnoasignatura; int nota; }
+struct alumno { string apellidos; string fechanac; string nombre; string sexo; }
+struct listaAlumnos { int idcurso; }
+struct listaAlumnosResponse { alumnoCurso return; }
+struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idalumnocurso; double notamedia; } -->
 
 <!DOCTYPE html>
 <html lang="es">
@@ -13,7 +33,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container">
-    <h1>Notas de <?=$nombre?></h1>
+    <h1>Notas de <?=$appellidos . ", " . $nombre?></h1>
     <form action="data.php" class="form">
         <table class="table table-stripped">
             <thead>
@@ -21,22 +41,14 @@
                 <th>NOTA</th>
             </thead>
             <tbody>
-                <tr>
-                    <td>Ciencias Naturales</td>
-                    <td><input class="form-control" type="number" name="notaNaturales" id="notaNaturales"></td>
-                </tr>
-                <tr>
-                    <td>Educacion Fisica</td>
-                    <td><input class="form-control" type="number" name="notaEF" id="notaEF"></td>
-                </tr>
-                <tr>
-                    <td>Lengua Castellana</td>
-                    <td><input class="form-control" type="number" name="notaLengua" id="notaLengua"></td>
-                </tr>
-                <tr>
-                    <td>Matematicas</td>
-                    <td><input class="form-control" type="number" name="notaMates" id="notaMates"></td>
-                </tr>
+                <?php
+                    foreach ($asignaturas as $asignatura) {
+                        echo "<tr>";
+                            echo "<td>" . htmlspecialchars($asignatura->asignatura) . "</td>";
+                            echo "<td><input class=\"form-control\" type='number' name='nota_" . htmlspecialchars($asignatura->idalumnoasignatura) . "' value='" . htmlspecialchars($asignatura->nota) . "' min='0' max='10' step='0.01'></td>";
+                        echo "</tr>";
+                    }
+                ?>
             </tbody>
         </table>
         <input type="button" value="Guardar notas" class="btn btn-primary">
