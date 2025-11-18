@@ -11,7 +11,7 @@ import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 
 @WebService
-public class Saludar {
+public class Peticiones {
 
 	@WebMethod
 	public List<database.Curso> listaCurso()
