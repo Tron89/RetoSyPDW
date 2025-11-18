@@ -33,7 +33,7 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container">
-    <h1>Notas de <?=$appellidos . ", " . $nombre?></h1>
+    <h1 class="mt-5">Notas de <?=$appellidos . ", " . $nombre?></h1>
     <form action="data.php" class="form">
         <table class="table table-stripped">
             <thead>
