@@ -205,7 +205,7 @@ public class Dao { // Una unica clase dao por que es mas simple c:
                
         	for (int i = 0; i < lista.length; i++) {
 				sqlWhen += " WHEN idalumnoasignatura = ? THEN ? ";
-				sqlWhere += " ? ";
+				sqlWhere += ((i==0)?"":",")+" ? ";
 			}
         	
         	
@@ -234,7 +234,7 @@ public class Dao { // Una unica clase dao por que es mas simple c:
             Conexion.cierraConexion();
         }
         
-        // actualizaMedias();
+        actualizaMedias();
         
         return result;
 	}
