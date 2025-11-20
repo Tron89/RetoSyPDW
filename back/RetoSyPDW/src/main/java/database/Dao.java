@@ -204,26 +204,30 @@ public class Dao { // Una unica clase dao por que es mas simple c:
         	String sqlWhere = "";
                
         	for (int i = 0; i < lista.length; i++) {
-				sqlWhen += " WHEN idalumnoasignatura = ? THEN ? ";
+				sqlWhen += " WHEN ? THEN ? ";
 				sqlWhere += ((i==0)?"":",")+" ? ";
 			}
         	
         	
             String sql = "UPDATE alumnoasignatura "
             		+ " SET "
-            		+ " nota = CASE"
+            		+ " nota = CASE idalumnoasignatura "
             		+ sqlWhen
             		+ " END "
             		+ " WHERE "
             		+ " idalumnoasignatura IN (" + sqlWhere + "); ";
             PreparedStatement ps = con.prepareStatement(sql);
+            System.out.println(sql);
             
             for (int i = 0; i < lista.length; i++) {
-                ps.setInt(1+(i*3), lista[i].getIdalumnoasignatura());
-                ps.setInt(2+(i*3), lista[i].getNota());
-                ps.setInt(3+(i*3), lista[i].getIdalumnoasignatura());
+                ps.setInt(1+(i*2), lista[i].getIdalumnoasignatura());
+                ps.setInt(2+(i*2), lista[i].getNota());
             }
             
+            for (int i = 0; i < lista.length; i++) {
+            	ps.setInt(i+(lista.length*2)+1, lista[i].getIdalumnoasignatura());
+            }
+
             result = ps.executeUpdate();
                        
             ps.close();
