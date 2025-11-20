@@ -22,7 +22,7 @@
     $hayCambios = false;
     foreach ($asignaturas as $asignatura) {
         if (isset($_POST[$valName . $asignatura->idalumnoasignatura])) {
-            $nuevaNota = floatval($_POST[$valName . $asignatura->idalumnoasignatura]);
+            $nuevaNota = $_POST[$valName . $asignatura->idalumnoasignatura];
             if ($nuevaNota >= 0 && $nuevaNota <= 10) {
                 $asignatura->nota = $nuevaNota;
             }
@@ -83,7 +83,7 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
         </table>
         <input type="hidden" name="idalumno" value="<?=htmlspecialchars($id)?>">
         <input type="submit" value="Guardar notas" class="btn btn-primary">
-        <input type="button" onclick="javascript:history.go(-1)" value="Volver" class="btn btn-secondary">
+        <a href="inicio.php" class="btn btn-secondary">Volver</a>
     </form>
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
