@@ -47,7 +47,6 @@
     <form action="alumnoInfo.php" class="form" method="post">
         <table class="table table-stripped">
             <thead>
-                <th>ID</th>
                 <th>ASIGNATURA</th>
                 <th>NOTA</th>
             </thead>
@@ -58,7 +57,6 @@
                     } else {
                         foreach ($asignaturas as $asignatura) {
                             echo "<tr>";
-                                echo "<td>" . htmlspecialchars($asignatura->idalumnoasignatura) . "</td>";
                                 echo "<td>" . htmlspecialchars($asignatura->asignatura) . "</td>";
                                 echo "<td><input class=\"form-control\" type='number' name='" . $valName .
                                 htmlspecialchars($asignatura->idalumnoasignatura) . "' value='" . htmlspecialchars($asignatura->nota) . "' min='0' max='10' step='0.01'></td>";

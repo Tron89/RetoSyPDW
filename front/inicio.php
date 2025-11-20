@@ -61,7 +61,6 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
                 foreach ($alumnos as $alumno) {
                     echo "<form action=\"alumnoInfo.php\" method=\"post\">";
                         echo "<tr>";
-                            echo "<td>" . htmlspecialchars($alumno->idalumnocurso) . "</td>";
                             echo "<td>" . htmlspecialchars($alumno->alumno->apellidos . ", " . $alumno->alumno->nombre) . "</td>";
                             echo "<td>" . htmlspecialchars(formateaFecha($alumno->alumno->fechanac)) . "</td>";
                             echo "<td>" . htmlspecialchars($alumno->alumno->sexo) . "</td>";
