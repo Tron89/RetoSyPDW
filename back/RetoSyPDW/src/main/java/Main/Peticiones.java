@@ -34,4 +34,10 @@ public class Peticiones {
 		database.Dao.actualizaNotas(lista);
 	}
 	
+	@WebMethod
+	public List<database.Alumno> listaAlumno(@WebParam (name="idalumno") int idalumno)
+	{
+		return database.Dao.listaAlumno(idalumno);
+	}
+	
 }
