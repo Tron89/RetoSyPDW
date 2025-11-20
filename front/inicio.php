@@ -1,9 +1,11 @@
 <?php
-    $idcurso = 1;
+    require_once 'func.php';
 
     $client = new SoapClient("http://localhost:9000/Peticiones?wsdl");
+    $idcurso = $_POST['curso'] ?? 1;
 
     $cursos = $client->listaCurso()->return;
+    $alumnos = $client->listaAlumnos(['idcurso' => $idcurso])->return;
 ?>
 
 <!-- listaCursoResponse listaCurso(listaCurso $parameters)
@@ -56,15 +58,15 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
         </thead>
         <tbody>
             <?php
-                $alumnos = $client->listaAlumnos(['idcurso' => $idcurso])->return;
                 foreach ($alumnos as $alumno) {
                     echo "<form action=\"alumnoInfo.php\" method=\"post\">";
                         echo "<tr>";
-                            echo "<td>" . htmlspecialchars($alumno->alumno->nombre . " " . $alumno->alumno->apellidos) . "</td>";
-                            echo "<td>" . htmlspecialchars($alumno->alumno->fechanac) . "</td>";
+                            echo "<td>" . htmlspecialchars($alumno->idalumnocurso) . "</td>";
+                            echo "<td>" . htmlspecialchars($alumno->alumno->apellidos . ", " . $alumno->alumno->nombre) . "</td>";
+                            echo "<td>" . htmlspecialchars(formateaFecha($alumno->alumno->fechanac)) . "</td>";
                             echo "<td>" . htmlspecialchars($alumno->alumno->sexo) . "</td>";
                             echo "<td>" . htmlspecialchars($alumno->notamedia) . "</td>";
-                            echo "<td>" . htmlspecialchars($alumno->fechamatricula) . "</td>";
+                            echo "<td>" . htmlspecialchars(formateaFecha($alumno->fechamatricula)) . "</td>";
                             echo "<td>";
                                 echo "<input type=\"hidden\" name=\"idalumno\" value=\"" . htmlspecialchars($alumno->idalumnocurso) . "\">";
                                 echo "<input type=\"submit\" value=\">\" class=\"btn btn-primary\">";

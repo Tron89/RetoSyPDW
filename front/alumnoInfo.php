@@ -1,23 +1,29 @@
 <?php
     $client = new SoapClient("http://localhost:9000/Peticiones?wsdl");
     
-    $id = $_POST['idalumno'] ?? 'ID';
-    $asignaturas = $client->alumnoasignatura(['idalumno' => $id])->return;
-    // echo var_dump($asignaturas);
-    $nombre = $asignaturas[0]->alumno->nombre ?? 'NOMBRE';
-    $appellidos = $asignaturas[0]->alumno->apellidos ?? 'APELLIDOS';
+    $id = $_POST['idalumno'] ?? -1;
+    $asignaturas = $client->alumnoasignatura(['idalumno' => $id])->return ?? [];
+    
+    if (sizeof($asignaturas) > 0) {
+        $nombre = $asignaturas[0]->alumno->nombre ?? 'NOMBRE';
+        $appellidos = $asignaturas[0]->alumno->apellidos ?? 'APELLIDOS';
+    } else {
+        $alumno = $client->listaAlumno(['idalumno' => $id])->return;
+        $nombre = 'NOMBRE';
+        $appellidos = 'APELLIDOS';
+    }
 
     $valName = 'nota_';
 
-    // foreach ($client->__getFunctions() as $type) {
-    //     echo htmlspecialchars($type) . "<br>";
-    // }
+    foreach ($client->__getFunctions() as $type) {
+        echo htmlspecialchars($type) . "<br>";
+    }
 
-    // echo "<br><br>";
+    echo "<br><br>";
     
-    // foreach ($client->__getTypes() as $type) {
-    //     echo htmlspecialchars($type) . "<br>";
-    // }
+    foreach ($client->__getTypes() as $type) {
+        echo htmlspecialchars($type) . "<br>";
+    }
 
     $hayCambios = false;
     foreach ($asignaturas as $asignatura) {
@@ -34,21 +40,6 @@
         $client->actualizaNotas(['lista' => $asignaturas]);
     }
 ?>
-
-<!-- listaCursoResponse listaCurso(listaCurso $parameters)
-alumnoasignaturaResponse alumnoasignatura(alumnoasignatura $parameters)
-listaAlumnosResponse listaAlumnos(listaAlumnos $parameters)
-
-struct listaCurso { }
-struct listaCursoResponse { curso return; }
-struct curso { string curso; int idCurso; }
-struct alumnoasignatura { int idalumno; }
-struct alumnoasignaturaResponse { alumnoAsignatura return; }
-struct alumnoAsignatura { alumno alumno; string asignatura; int idalumnoasignatura; int nota; }
-struct alumno { string apellidos; string fechanac; string nombre; string sexo; }
-struct listaAlumnos { int idcurso; }
-struct listaAlumnosResponse { alumnoCurso return; }
-struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idalumnocurso; double notamedia; } -->
 
 <!DOCTYPE html>
 <html lang="es">
@@ -70,13 +61,17 @@ struct alumnoCurso { alumno alumno; curso curso; string fechamatricula; int idal
             </thead>
             <tbody>
                 <?php
-                    foreach ($asignaturas as $asignatura) {
-                        echo "<tr>";
-                            echo "<td>" . htmlspecialchars($asignatura->idalumnoasignatura) . "</td>";
-                            echo "<td>" . htmlspecialchars($asignatura->asignatura) . "</td>";
-                            echo "<td><input class=\"form-control\" type='number' name='" . $valName .
-                            htmlspecialchars($asignatura->idalumnoasignatura) . "' value='" . htmlspecialchars($asignatura->nota) . "' min='0' max='10' step='0.01'></td>";
-                        echo "</tr>";
+                    if (sizeof($asignaturas) == 0) {
+                        echo "<tr><td colspan='3'>No hay asignaturas para este alumno.</td></tr>";
+                    } else {
+                        foreach ($asignaturas as $asignatura) {
+                            echo "<tr>";
+                                echo "<td>" . htmlspecialchars($asignatura->idalumnoasignatura) . "</td>";
+                                echo "<td>" . htmlspecialchars($asignatura->asignatura) . "</td>";
+                                echo "<td><input class=\"form-control\" type='number' name='" . $valName .
+                                htmlspecialchars($asignatura->idalumnoasignatura) . "' value='" . htmlspecialchars($asignatura->nota) . "' min='0' max='10' step='0.01'></td>";
+                            echo "</tr>";
+                        }
                     }
                 ?>
             </tbody>
