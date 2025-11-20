@@ -1,8 +1,12 @@
 <?php
-    $client = new SoapClient("http://localhost:9000/Peticiones?wsdl");
-    
-    // echo var_dump($client->__getFunctions());
-    
+    $client = new SoapClient("http://localhost:9000/Peticiones?wsdl", [
+        'cache_wsdl' => WSDL_CACHE_NONE
+    ]);
+
+    // echo "<pre>";
+    // print_r($client->__getFunctions());
+    // echo "</pre>";
+
     $id = $_POST['idalumno'] ?? -1;
     $asignaturas = $client->alumnoasignatura(['idalumno' => $id])->return ?? [];
     
