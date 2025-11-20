@@ -217,7 +217,6 @@ public class Dao { // Una unica clase dao por que es mas simple c:
             		+ " WHERE "
             		+ " idalumnoasignatura IN (" + sqlWhere + "); ";
             PreparedStatement ps = con.prepareStatement(sql);
-            System.out.println(sql);
             
             for (int i = 0; i < lista.length; i++) {
                 ps.setInt(1+(i*2), lista[i].getIdalumnoasignatura());
