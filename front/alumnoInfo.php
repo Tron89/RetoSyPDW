@@ -18,11 +18,11 @@
     // foreach ($client->__getTypes() as $type) {
     //     echo htmlspecialchars($type) . "<br>";
     // }
-
+    
     $hayCambios = false;
     foreach ($asignaturas as $asignatura) {
         if (isset($_POST[$valName . $asignatura->idalumnoasignatura])) {
-            $nuevaNota = floatval($_POST[$valName . $asignatura->idalumnoasignatura]);
+            $nuevaNota = $_POST[$valName . $asignatura->idalumnoasignatura];
             if ($nuevaNota >= 0 && $nuevaNota <= 10) {
                 $asignatura->nota = $nuevaNota;
             }
