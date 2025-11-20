@@ -1,6 +1,8 @@
 <?php
     $client = new SoapClient("http://localhost:9000/Peticiones?wsdl");
     
+    // echo var_dump($client->__getFunctions());
+    
     $id = $_POST['idalumno'] ?? -1;
     $asignaturas = $client->alumnoasignatura(['idalumno' => $id])->return ?? [];
     
@@ -9,21 +11,11 @@
         $appellidos = $asignaturas[0]->alumno->apellidos ?? 'APELLIDOS';
     } else {
         $alumno = $client->listaAlumno(['idalumno' => $id])->return;
-        $nombre = 'NOMBRE';
-        $appellidos = 'APELLIDOS';
+        $nombre = $alumno->nombre ?? 'NOMBRE';
+        $appellidos = $alumno->apellidos ?? 'APELLIDOS';
     }
 
     $valName = 'nota_';
-
-    foreach ($client->__getFunctions() as $type) {
-        echo htmlspecialchars($type) . "<br>";
-    }
-
-    echo "<br><br>";
-    
-    foreach ($client->__getTypes() as $type) {
-        echo htmlspecialchars($type) . "<br>";
-    }
 
     $hayCambios = false;
     foreach ($asignaturas as $asignatura) {
